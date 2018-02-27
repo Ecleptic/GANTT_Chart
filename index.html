@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>GANTT</title>
+</head>
+
+<body>
+    <label for="delayTime">Delay Time (In seconds)</label>
+    <input type="number" name="delayTime" value="1" id="delayTimeInput" step=".1">
+    <form id="myform">
+        <input id="myfile" name="files[]" multiple="" type="file" />
+    </form>
+    <label for="rrInput">Round Robin Q</label>
+    <input type="text" id="rrInput" placeholder="2"></input>
+    <span>Input</span>
+    <ul class="inputDisplayContainer"></ul>
+
+    <li id="charList"></li>
+</body>
+<script src="index.js"></script>
+
+</html>
