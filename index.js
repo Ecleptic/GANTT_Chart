@@ -1,7 +1,9 @@
+// TODO: At the end of the simulation, output the turnaround time for each process as well as average turnaround time.
+
 let inputProcesses
 let queue = []
 let active
-const RRN = document.querySelector("#rrInput") || 2
+let RRN = document.querySelector("#rrInput") || 2
 let maxSteps = 0
 let uniqueNames
 let GANTT = []
@@ -229,12 +231,71 @@ function eventLoop(i) {
       active.Burst--
       // push into the list
       GANTT.push(active.Name)
-      chartList.innerHTML = GANTT.toString()
+      chartList.innerHTML = GANTT.map((item, key) => {
+        // console.log("%cKey:", "color:purple", key)
+        return `
+        <ul class="GanttItem__list">
+          <li>${key}</li>
+          <li>${item}</li>
+        </ul>
+        `
+      })
+        .join("")
+        .toString() //TODO: Map it you artard
     }
 
     console.log("%cGantt 📊:", "color:purple", GANTT)
     step++
     console.log("%cAre we done?", "color:orange", isDone())
-    if (!isDone()) eventLoop() //  decrement i and call myLoop again if i > 0
+    //  decrement i and call myLoop again if i > 0
+    if (!isDone()) {
+      eventLoop()
+    } else {
+      getTurnaround(GANTT)
+    }
   }, delay * 1000)
+}
+
+/**
+ * Computes turnaround from finalized array
+ * @param {array} array
+ */
+function getTurnaround(array) {
+  const uniques = array.reduce((obj, item, index) => {
+    if (!obj[item]) {
+      obj[item] = { first: index, last: index }
+      // obj[item] = 0
+    }
+    obj[item].last++
+    // obj[item]++
+    return obj
+  }, {})
+
+  for (i in uniques) {
+    uniques[i].turnaround = uniques[i].last - uniques[i].first
+  }
+  console.table(uniques)
+
+  // console.log(Object.keys(uniques))
+  const turnaround =
+    Object.keys(uniques).reduce((previous, key) => {
+      return previous + uniques[key].turnaround
+    }, 0) / Object.keys(uniques).length
+
+  document.querySelector(
+    ".turnaround__turnaroundList"
+  ).innerHTML = "Turnarounds" + Object.keys(uniques).map(key=>{
+    // console.log(`${key}: ${uniques[key].turnaround}`)
+    return`
+    <li>${key}: ${uniques[key].turnaround}</li>
+    `
+  }).join('')
+  document.querySelector(".turnaround__totalTurnaround").innerHTML =
+    "Total Turnaround: " + turnaround
+
+  console.log(
+    "%cTotal Turnaround",
+    "color:#7e57c2;background:#292d3e",
+    turnaround
+  )
 }

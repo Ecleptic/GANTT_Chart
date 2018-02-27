@@ -1,4 +1,13 @@
-body{
-    background: #002B35;
-    color: #B7882A;
-  }
+body {
+  background: #002b35;
+  color: #b7882a;
+}
+#chartList {
+  display: flex;
+  list-style-type: none;
+}
+
+.GanttItem__list {
+  list-style-type: none;
+  padding: 10px;
+}
