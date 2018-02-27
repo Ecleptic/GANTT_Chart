@@ -229,7 +229,7 @@ function eventLoop(i) {
       active.Burst--
       // push into the list
       GANTT.push(active.Name)
-      chartList.innerHTML = GANTT.toString()
+      charList.innerHTML = GANTT.toString()
     }
 
     console.log("%cGantt 📊:", "color:purple", GANTT)
