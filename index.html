@@ -1,41 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="style.css">
-    <title>GANTT</title>
-</head>
-
-<body>
-    <form id="myform" action="">
-        <input id="myfile" name="files[]" multiple="" type="file" style="display: none;" />
-        <input type="button" value="Select Input File" onclick="document.getElementById('myfile').click()" />
-    </form>
-    <button class="startButton">Start</button>
-    <textarea name="readInInputDisplay" id="" cols="5" rows="10" class="readInInputDisplay__TextArea" placeholder="Your Input Text"></textarea>
-    <div class="Inputs__Container">
-        <div id="delayTimeDisv">
-            <label for="delayTime">Delay Time (In seconds)</label>
-            <input type="number" name="delayTime" value="1" id="delayTimeInput" step=".1">
-        </div>
-        <div id="RRInputDiv">
-            <label for="rrInput">Round Robin Q</label>
-            <input type="text" id="rrInput" placeholder="2">
-        </div>
-        <span class="queueList"></span>
+<form id="myform" action="">
+    <input id="myfile" name="files[]" multiple="" type="file" style="display: none;" />
+    <input type="button" value="Select Input File" onclick="document.getElementById('myfile').click()" />
+</form>
+<button class="startButton">Start</button>
+<textarea name="readInInputDisplay" id="" cols="5" rows="10" class="readInInputDisplay__TextArea" placeholder="Your Input Text"></textarea>
+<div class="Inputs__Container">
+    <div id="delayTimeDiv">
+        <label for="delayTime">Delay Time (in seconds)</label>
+        <br>
+        <input type="number" name="delayTime" value="1" id="delayTimeInput" step=".1">
     </div>
-    <ul class="inputDisplayContainer"></ul>
-
-    <div class="turnaround__container">
-        <ul class="turnaround__turnaroundList"></ul>
-        <div class="turnaround__totalTurnaround"></div>
+    <br>
+    <div id="RRInputDiv">
+        <label for="rrInput">Round Robin Q</label>
+        <br>
+        <input type="text" id="rrInput" placeholder="2">
     </div>
+    <span class="queueList"></span>
+</div>
+<ul class="inputDisplayContainer"></ul>
 
-    <ul id="chartList"></ul>
-</body>
-<script src="index.js"></script>
+<div class="turnaround__container">
+    <ul class="turnaround__turnaroundList"></ul>
+    <div class="turnaround__totalTurnaround"></div>
+</div>
 
-</html>
+<ul id="chartList"></ul>
