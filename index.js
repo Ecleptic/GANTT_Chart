@@ -1,15 +1,17 @@
-// TODO: At the end of the simulation, output the turnaround time for each process as well as average turnaround time.
-
 let inputProcesses
 let queue = []
 let active
-let RRN = document.querySelector("#rrInput") || 2
+let RRN = document.querySelector("#rrInput").value || 2
 let maxSteps = 0
 let uniqueNames
 let GANTT = []
-let currentQ = 0
+let currentQ = 1
 let delay = 1 //in seconds
 let step
+const readInInputDisplay = document.querySelector(
+  ".readInInputDisplay__TextArea"
+)
+document.querySelector(".startButton").addEventListener("click", beginProgram)
 document
   .querySelector("#delayTimeInput")
   .addEventListener(
@@ -40,65 +42,82 @@ function addItem(e) {
       return
     }
 
-    filecontent = e.target.result
+    let filecontent = e.target.result
 
-    let a = filecontent.split("\n").filter(item => item !== "")
-    a = a.splice(1, a.length - 1)
+    readInInputDisplay.innerHTML = filecontent
+  }
 
-    let c = []
-    const alphabet = [
-      "Z",
-      "Y",
-      "X",
-      "W",
-      "V",
-      "U",
-      "T",
-      "S",
-      "R",
-      "Q",
-      "P",
-      "O",
-      "N",
-      "M",
-      "L",
-      "K",
-      "J",
-      "I",
-      "H",
-      "G",
-      "F",
-      "E",
-      "D",
-      "C",
-      "B",
-      "A"
-    ]
-    let input = []
-    const b = a.map(key => {
-      let temp = key.split(" ")
-      let temp2 = {}
+  reader.readAsText(e.target.files[0])
+}
 
-      for (let i in temp) {
-        if (Number(i) === 0) {
-          temp2.Arrival = Number(temp[i])
-        } else if (Number(i) === 1) {
-          temp2.Priority = Number(temp[i])
-        } else if (Number(i) === 2) {
-          temp2.Burst = Number(temp[i])
-        }
+function beginProgram() {
+  // Clear all variables
+
+  inputProcesses
+  queue = []
+  maxSteps = 0
+  GANTT = []
+  currentQ = 1
+  document.querySelector(".turnaround__turnaroundList").innerHTML = ""
+  document.querySelector(".inputDisplayContainer").innerHTML = ""
+  document.querySelector(".turnaround__totalTurnaround").innerHTML = ""
+
+  const filecontent = readInInputDisplay.value
+  let a = filecontent.split("\n").filter(item => item !== "")
+  a = a.splice(1, a.length - 1)
+
+  let c = []
+  const alphabet = [
+    "Z",
+    "Y",
+    "X",
+    "W",
+    "V",
+    "U",
+    "T",
+    "S",
+    "R",
+    "Q",
+    "P",
+    "O",
+    "N",
+    "M",
+    "L",
+    "K",
+    "J",
+    "I",
+    "H",
+    "G",
+    "F",
+    "E",
+    "D",
+    "C",
+    "B",
+    "A"
+  ]
+  let input = []
+  a.map(key => {
+    let temp = key.split(" ")
+    let temp2 = {}
+
+    for (let i in temp) {
+      if (Number(i) === 0) {
+        temp2.Arrival = Number(temp[i])
+      } else if (Number(i) === 1) {
+        temp2.Priority = Number(temp[i])
+      } else if (Number(i) === 2) {
+        temp2.Burst = Number(temp[i])
       }
-      temp2.Name = alphabet.pop()
+    }
+    temp2.Name = alphabet.pop()
 
-      input.push(temp2)
-    })
-
-    console.log(input)
-    const inputDisplayContainer = document.querySelector(
-      ".inputDisplayContainer"
-    )
-
-    inputDisplayContainer.innerHTML = input
+    input.push(temp2)
+  })
+  const inputDisplayContainer = document.querySelector(".inputDisplayContainer")
+  // place the file content into
+  inputDisplayContainer.innerHTML =
+    "<h3>Translated Input:</h3>" +
+    input
       .map(item => {
         console.log(item)
         return `<li>
@@ -111,13 +130,13 @@ function addItem(e) {
                 </li>`
       })
       .join("")
-    inputProcesses = input
-    runGanttProgram()
-  }
-
-  reader.readAsText(e.target.files[0])
+  inputProcesses = input
+  runGanttProgram()
 }
 
+/**
+ * Main program, runs at the beginning of program to setup the event loop
+ */
 function runGanttProgram() {
   console.log("%cInput Processes", "color:green", inputProcesses)
   console.log("%cDelay", "color:goldenrod", delay)
@@ -134,8 +153,8 @@ function runGanttProgram() {
    * Get total steps
    */
   getTotalSteps()
-  // Begin Event loop where step starts at first item's arrival
 
+  // Begin Event loop where step starts at first item's arrival
   eventLoop()
   // End Event Loop
 }
@@ -177,6 +196,7 @@ function getTotalSteps() {
 
 function eventLoop(i) {
   setTimeout(() => {
+    // console.log(`%cCurrent Quantum: ${currentQ}, at RR:${RRN}`, "color:violet;")
     // sort queue backwards by priority
     queue = queue.sort((a, b) => (a.Priority > b.Priority ? -1 : 1))
 
@@ -186,9 +206,17 @@ function eventLoop(i) {
         console.log(`Process ${i.Name} now in queue`)
         // Push into queue
         queue.push(i)
-
         // sort queue backwards by priority
         queue = queue.sort((a, b) => (a.Priority > b.Priority ? -1 : 1))
+
+        document.querySelector(".queueList").innerHTML =
+          "Queue: " +
+          queue
+            .sort((a, b) => (a.Priority > b.Priority ? 1 : -1))
+            .map(key => {
+              return `${key.Name}`
+            })
+            .join(", ")
       }
     }
 
@@ -261,13 +289,28 @@ function eventLoop(i) {
  * @param {array} array
  */
 function getTurnaround(array) {
+  // console.log("%cArray","color:green",array)
   const uniques = array.reduce((obj, item, index) => {
     if (!obj[item]) {
-      obj[item] = { first: index, last: index }
-      // obj[item] = 0
+      // const ProcessArrival = inputProcesses.map(key=>{
+      // if(key.Name === item)return key.Arrival
+      // })
+      let ProcessArrival
+      for (const i in inputProcesses) {
+        if (inputProcesses[i].Name === item)
+          ProcessArrival = inputProcesses[i].Arrival
+      }
+      console.log("Process Arrival", ProcessArrival)
+      obj[item] = { first: ProcessArrival, last: index }
     }
-    obj[item].last++
-    // obj[item]++
+    // console.log("item",item)
+    // console.log("obj",obj)
+    // console.log("obj[item]",obj[item])
+    console.log(
+      `%c ${item}'s current last is: ${obj[item].last}`,
+      "color:red; font-size:13px;"
+    )
+    obj[item].last = index + 1
     return obj
   }, {})
 
@@ -282,14 +325,18 @@ function getTurnaround(array) {
       return previous + uniques[key].turnaround
     }, 0) / Object.keys(uniques).length
 
-  document.querySelector(
-    ".turnaround__turnaroundList"
-  ).innerHTML = "Turnarounds" + Object.keys(uniques).map(key=>{
-    // console.log(`${key}: ${uniques[key].turnaround}`)
-    return`
-    <li>${key}: ${uniques[key].turnaround}</li>
-    `
-  }).join('')
+  document.querySelector(".turnaround__turnaroundList").innerHTML =
+    "Turnarounds" +
+    Object.keys(uniques)
+      .map(key => {
+        // console.log(`${key}: ${uniques[key].turnaround}`)
+        return `
+        <li>${key}: ${uniques[key].first} - ${uniques[key].last} = ${
+          uniques[key].turnaround
+        }</li>
+        `
+      })
+      .join("")
   document.querySelector(".turnaround__totalTurnaround").innerHTML =
     "Total Turnaround: " + turnaround
 
